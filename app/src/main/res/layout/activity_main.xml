@@ -16,13 +16,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
-    <com.android.advertisement.adslibrary.AdvertisementView
-        android:id="@+id/view_ads"
-        android:layout_width="match_parent"
-        android:layout_height="208dp"
-        app:layout_constraintBottom_toTopOf="@+id/context_fragment"
-        app:layout_constraintTop_toBottomOf="@id/return_value_name"
-        ></com.android.advertisement.adslibrary.AdvertisementView>
+
 
     <FrameLayout
         android:id="@+id/context_fragment"
@@ -30,7 +24,6 @@
         android:layout_height="480dp"
         android:background="#aaaaff"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view_ads"
         ></FrameLayout>
 
 
