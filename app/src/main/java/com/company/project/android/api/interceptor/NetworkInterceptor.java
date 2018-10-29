@@ -27,16 +27,14 @@ public class NetworkInterceptor implements Interceptor {
     @Override
     public Response intercept(Chain chain) throws IOException {
 
-        Request request = chain.request();
-
-        request.newBuilder().addHeader(Constant.TIME_TOKEN, String.valueOf(System.currentTimeMillis()));//添加服务器访问时间
+        Request requestBuilder = chain.request();
+        Request.Builder builder = requestBuilder.newBuilder();
+        builder.addHeader(Constant.TIME_TOKEN, String.valueOf(System.currentTimeMillis()));//添加服务器访问时间
 
         boolean isConnected = NetWorkUtil.isConnected(BaseApplication.getInstance());
         //无网络时强制使用缓存
         if (!isConnected) {
-            request = request.newBuilder()
-                             .cacheControl(CacheControl.FORCE_CACHE)
-                             .build();
+           builder.cacheControl(CacheControl.FORCE_CACHE)；
         }
         String method = request.method();
         if ("POST".equalsIgnoreCase(method)) {
@@ -44,6 +42,7 @@ public class NetworkInterceptor implements Interceptor {
         } else if ("GET".equalsIgnoreCase(method)) {
             LogUtils.i("GET 请求方式  url=" + request.url());
         }
+        Request request = builder.build();
         Response response = chain.proceed(request);
        /* String cookie = response.header("Set-Cookie");
         if (cookie != null) {
