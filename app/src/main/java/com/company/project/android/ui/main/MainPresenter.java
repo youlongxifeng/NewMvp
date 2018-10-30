@@ -102,12 +102,12 @@ public class MainPresenter extends MainContract.Presenter {
 
             @Override
             public void onError(Throwable e) {
-
+                LogUtils.i("TAG","aBoolean==e="+e);
             }
 
             @Override
             public void onComplete() {
-
+                LogUtils.i("TAG","aBoolean==onComplete=");
             }
         };
     }

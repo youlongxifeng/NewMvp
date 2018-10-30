@@ -9,6 +9,12 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        javaCompileOptions {//Java编译配置参数
+            annotationProcessorOptions {
+                arguments = [eventBusIndex: 'com.company.project.android.MyEventBusIndex']
+            }
+        }
     }
     buildTypes {
         release {

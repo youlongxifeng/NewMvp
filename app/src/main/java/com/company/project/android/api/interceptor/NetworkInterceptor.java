@@ -34,13 +34,13 @@ public class NetworkInterceptor implements Interceptor {
         boolean isConnected = NetWorkUtil.isConnected(BaseApplication.getInstance());
         //无网络时强制使用缓存
         if (!isConnected) {
-           builder.cacheControl(CacheControl.FORCE_CACHE)；
+           builder.cacheControl(CacheControl.FORCE_CACHE);
         }
-        String method = request.method();
+        String method = requestBuilder.method();
         if ("POST".equalsIgnoreCase(method)) {
-            LogUtils.i("POST 请求方式  url=" + request.url());
+            LogUtils.i("POST 请求方式  url=" + requestBuilder.url());
         } else if ("GET".equalsIgnoreCase(method)) {
-            LogUtils.i("GET 请求方式  url=" + request.url());
+            LogUtils.i("GET 请求方式  url=" + requestBuilder.url());
         }
         Request request = builder.build();
         Response response = chain.proceed(request);

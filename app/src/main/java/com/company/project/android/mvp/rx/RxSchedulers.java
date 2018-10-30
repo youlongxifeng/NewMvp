@@ -8,6 +8,7 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.ObservableTransformer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -35,6 +36,7 @@ public class RxSchedulers {
 
     /**
      * 统一线程处理 ompose简化线程
+     *
      * @param <T>
      * @return
      */
@@ -42,10 +44,17 @@ public class RxSchedulers {
         return new ObservableTransformer<T, T>() {
             @Override
             public ObservableSource<T> apply(Observable<T> upstream) {
+                /**
+                 * subscribeOn()主要改变的是订阅的线程，即call()执行的线程;
+                 *observeOn()主要改变的是发送的线程，即onNext()执行的线程。
+                 *
+                 */
                 return upstream
                         .subscribeOn(Schedulers.io())//指定的就是发射事件的线程
                         .unsubscribeOn(Schedulers.io())
+                        .onErrorResumeNext(new ErrorObservableSource<T>())//需要传入泛型
                         .observeOn(AndroidSchedulers.mainThread());//指定的就是订阅者接收事件的线程。
+
             }
         };
     }
