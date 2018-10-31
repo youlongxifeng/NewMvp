@@ -2,6 +2,7 @@ package com.company.project.android.ui.main;
 
 import android.util.Log;
 
+import com.company.project.android.api.ApiEngine;
 import com.company.project.android.bean.Gank;
 import com.company.project.android.mvp.rx.RxSchedulers;
 import com.company.project.android.utils.LogUtils;
@@ -9,13 +10,20 @@ import com.company.project.android.utils.LogUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.InputStream;
 import java.util.Map;
 
 import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
 import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 
 /**
  * @author Administrator
@@ -38,8 +46,8 @@ public class MainPresenter extends MainContract.Presenter {
 
     @Override
     public String login(Map maps) {
-      /*  String name = mModel.loginSuccess();
-        */
+        /*  String name = mModel.loginSuccess();
+         */
         Log.i("TAG", "=====active=" + Thread.currentThread().getName());
         String name = mModel.loginSuccess();
         Log.i("TAG", "=====active=" + name + "  =" + (mView != null));
@@ -59,16 +67,46 @@ public class MainPresenter extends MainContract.Presenter {
     @Override
     public void getGank() {
         DisposableObserver<Gank> mObserver = getDisposableObserver();
-
-        // getObservable()//被观察者
-       /* Disposable disposable=mModel.getGank()
-              .compose(RxSchedulers.<Gank>switchObservableThread())
-               .subscribe(mObserver,  new RxException<Throwable> );*/
-        //  .subscribe(mObserver);
         mModel.getGank()
-              .compose(RxSchedulers.<Gank>switchObservableThread())
-              .subscribe(mObserver);
+                .compose(RxSchedulers.<Gank>switchObservableThread())
+                .subscribe(mObserver);
         addSubscribe(mObserver);
+        ApiEngine.getInstance().getApiService().download("http://192.168.0.42:8080/download/fxhb_multiple_device/release/1.0.0.1/app-device-release.apk")
+                .subscribeOn(Schedulers.io())
+                .map(new Function<ResponseBody, Object>() {
+                    @Override
+                    public Object apply(ResponseBody responseBody) throws Exception {
+
+                        InputStream inputStream = null;
+                        //初始化
+                        inputStream = responseBody.byteStream();
+                        //总长度
+                        long allLength =responseBody.contentLength();
+                        LogUtils.i("TAG","=========================allLength="+allLength);
+                        return null;
+                    }
+                }).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Object>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Object o) {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
 
     }
 
@@ -78,16 +116,16 @@ public class MainPresenter extends MainContract.Presenter {
 
         try {
             JSONObject requestData = new JSONObject();
-            requestData.put("appid",app_id);
-            requestData.put("secret",secret_key);
-            RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"),requestData.toString());
-            mModel.accessToken( requestBody)
-                  .compose(RxSchedulers.<JSONObject>switchObservableThread())
-                  .subscribe(mObserver);
+            requestData.put("appid", app_id);
+            requestData.put("secret", secret_key);
+            RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), requestData.toString());
+            mModel.accessToken(requestBody)
+                    .compose(RxSchedulers.<JSONObject>switchObservableThread())
+                    .subscribe(mObserver);
             addSubscribe(mObserver);
         } catch (JSONException e) {
             e.printStackTrace();
-            LogUtils.i("TAG","e======0="+e);
+            LogUtils.i("TAG", "e======0=" + e);
         }
 
     }
@@ -96,18 +134,18 @@ public class MainPresenter extends MainContract.Presenter {
         return new DisposableObserver<Gank>() {
             @Override
             public void onNext(Gank aBoolean) {
-                LogUtils.i("TAG","aBoolean==="+aBoolean);
+                LogUtils.i("TAG", "aBoolean===" + aBoolean);
 
             }
 
             @Override
             public void onError(Throwable e) {
-                LogUtils.i("TAG","aBoolean==e="+e);
+                LogUtils.i("TAG", "aBoolean==e=" + e);
             }
 
             @Override
             public void onComplete() {
-                LogUtils.i("TAG","aBoolean==onComplete=");
+                LogUtils.i("TAG", "aBoolean==onComplete=");
             }
         };
     }
@@ -116,18 +154,18 @@ public class MainPresenter extends MainContract.Presenter {
         return new DisposableObserver<JSONObject>() {
             @Override
             public void onNext(JSONObject aBoolean) {
-                LogUtils.i("TAG","aBoolean==="+aBoolean);
+                LogUtils.i("TAG", "aBoolean===" + aBoolean);
 
             }
 
             @Override
             public void onError(Throwable e) {
-                LogUtils.i("TAG","aBoolean==e="+e);
+                LogUtils.i("TAG", "aBoolean==e=" + e);
             }
 
             @Override
             public void onComplete() {
-                LogUtils.i("TAG","onComplete=");
+                LogUtils.i("TAG", "onComplete=");
             }
         };
     }

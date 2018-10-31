@@ -12,9 +12,11 @@ import java.util.Map;
 import io.reactivex.Observable;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.http.Body;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
@@ -22,6 +24,8 @@ import retrofit2.http.Part;
 import retrofit2.http.PartMap;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import retrofit2.http.Streaming;
+import retrofit2.http.Url;
 
 /**
  * @author Administrator
@@ -77,5 +81,27 @@ public interface ApiService {
     @Multipart
     @POST("casuserroleapi/editUserInfo")
     Observable<User> uploadFilesWithParts(@PartMap() List<MultipartBody.Part> maps, @PartMap Map<String,Object> map);
+
+    /**
+     * 断点续传下载
+     *
+     * @param range 断点下载范围 bytes= start - end
+     * @param url   下载地址
+     * @return
+     * @Streaming 防止内容写入内存, 大文件通过此注解避免OOM
+     */
+    @Streaming
+    @GET
+    Observable<ResponseBody> download(@Header("RANGE") String range, @Url String url);
+
+    /**
+     * 下载
+     * @param url   下载地址
+     * @return
+     * @Streaming 防止内容写入内存, 大文件通过此注解避免OOM
+     */
+    @Streaming
+    @GET
+    Observable<ResponseBody> download( @Url String url);
 }
 
